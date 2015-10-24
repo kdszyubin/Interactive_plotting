@@ -15,6 +15,11 @@ protected: // 仅从序列化创建
 public:
 	CInteractive_plottingDoc* GetDocument() const;
 	int m_iW, m_iH;
+	// 定义若干类变量：
+	BOOL m_bLButtonDown, // 判断是否按下左鼠标键
+		m_bErase; // 是否需要擦除图形
+	CPoint p0, pm; // 记录直线起点和动态终点
+	CPen *pGrayPen, *pLinePen; // 定义灰色和直线笔的对象指针
 // 操作
 public:
 
@@ -42,6 +47,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // Interactive_plottingView.cpp 中的调试版本
