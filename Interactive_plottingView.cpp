@@ -30,6 +30,9 @@ BEGIN_MESSAGE_MAP(CInteractive_plottingView, CView)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
 	ON_WM_SIZE()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_MOUSEMOVE()
+	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
 // CInteractive_plottingView 构造/析构
@@ -37,6 +40,10 @@ END_MESSAGE_MAP()
 CInteractive_plottingView::CInteractive_plottingView()
 {
 	// TODO: 在此处添加构造代码
+	m_bLButtonDown = FALSE; // 设左鼠标键按下为假
+	m_bErase = FALSE; // 设需要擦除为假
+	pGrayPen = new CPen(PS_DOT, 0, RGB(128, 128, 128)); // 创建灰色点线笔
+	pLinePen = new CPen(PS_SOLID, 10, RGB(255, 0, 0)); // 创建红色的直线笔
 
 }
 
@@ -125,4 +132,64 @@ void CInteractive_plottingView::OnSize(UINT nType, int cx, int cy)
 	// TODO: 在此处添加消息处理程序代码
 	m_iW = cx;//保存客户区大小
 	m_iH = cy;
+}
+
+
+void CInteractive_plottingView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	SetCapture(); // 设置鼠标捕获
+	m_bLButtonDown = TRUE; // 设左鼠标键按下为真
+	p0 = point; // 保存直线的起点
+	pm = p0; // 让直线的终点等于起点
+
+	SetCursor(LoadCursor(NULL, IDC_CROSS)); // 设置鼠标为十字
+	CView::OnLButtonDown(nFlags, point);
+}
+
+
+void CInteractive_plottingView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	if (m_bLButtonDown) { // 左鼠标键按下为真（拖动画图）
+		CDC* pDC = GetDC(); // 获取设备上下文
+		pDC->SelectObject(pGrayPen); // 选取灰色点线笔
+		pDC->SetROP2(R2_XORPEN); // 设置为异或绘图方式
+		pDC->SetBkMode(TRANSPARENT); // 设置透明背景模式
+									 //pDC->SelectStockObject(NULL_BRUSH); // 选入空刷
+									 // 用于动态画封闭图形（如矩形、椭圆等）
+		if (m_bErase) { // 需要擦除为真
+			pDC->MoveTo(p0); pDC->LineTo(pm); // 擦除原直线
+		}
+		else // 需要擦除为假
+			m_bErase = TRUE; // 设需要擦除为真
+		pDC->MoveTo(p0); pDC->LineTo(point); // 绘制新直线
+		pm = point; // 更新老终点
+		ReleaseDC(pDC); // 释放设备上下文
+	}
+	CView::OnMouseMove(nFlags, point);
+}
+
+
+void CInteractive_plottingView::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	ReleaseCapture(); // 释放鼠标捕获
+	SetCursor(LoadCursor(NULL, IDC_ARROW)); // 设置鼠标为十字
+	if (m_bLButtonDown) { // 左鼠标键按下为真
+		CDC* pDC = GetDC(); // 获取设备上下文
+		pDC->SelectObject(pGrayPen); // 选入灰色点线笔
+		pDC->SetROP2(R2_XORPEN); // 设置为异或绘图方式
+		pDC->SetBkMode(TRANSPARENT); // 设置透明背景模式
+									 // pDC->SelectStockObject(NULL_BRUSH); // 选入空刷
+									 // 用于动态画封闭图形（如矩形、椭圆等）
+		pDC->MoveTo(p0); pDC->LineTo(pm); // 擦除原直线
+		pDC->SelectObject(pLinePen); // 选择直线笔
+		pDC->SetROP2(R2_COPYPEN); // 设置为覆盖绘图方式
+		pDC->MoveTo(p0); pDC->LineTo(point); // 绘制最终的直线
+		m_bLButtonDown = FALSE; // 重设左鼠标键按下为假
+		m_bErase = FALSE; // 重需要擦除为假
+		ReleaseDC(pDC); // 释放设备上下文
+	}
+	CView::OnLButtonUp(nFlags, point);
 }
