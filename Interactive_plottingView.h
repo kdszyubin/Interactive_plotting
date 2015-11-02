@@ -4,8 +4,8 @@
 
 #pragma once
 
-
-class CInteractive_plottingView : public CView
+#include "Graph.h"
+class CInteractive_plottingView : public CView, public CGraph
 {
 protected: // 仅从序列化创建
 	CInteractive_plottingView();
@@ -16,10 +16,8 @@ public:
 	CInteractive_plottingDoc* GetDocument() const;
 	int m_iW, m_iH;
 	// 定义若干类变量：
-	BOOL m_bLButtonDown, // 判断是否按下左鼠标键
-		m_bErase; // 是否需要擦除图形
-	CPoint p0, pm; // 记录直线起点和动态终点
-	CPen *pGrayPen, *pLinePen; // 定义灰色和直线笔的对象指针
+	
+
 // 操作
 public:
 
@@ -50,6 +48,26 @@ public:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnDrawSetting();
+	afx_msg void OnGraphLine();
+	afx_msg void OnUpdateGraphLine(CCmdUI *pCmdUI);
+	afx_msg void OnGraphRectangle();
+	afx_msg void OnUpdateGraphRectangle(CCmdUI *pCmdUI);
+	afx_msg void OnGraphRoundrect();
+	afx_msg void OnUpdateGraphRoundrect(CCmdUI *pCmdUI);
+	afx_msg void OnGraphCircle();
+	afx_msg void OnUpdateGraphCircle(CCmdUI *pCmdUI);
+	afx_msg void OnGraphEllipse();
+	afx_msg void OnUpdateGraphEllipse(CCmdUI *pCmdUI);
+	afx_msg void OnGraphPolyline();
+	afx_msg void OnUpdateGraphPolyline(CCmdUI *pCmdUI);
+	afx_msg void OnGraphPolygon();
+	afx_msg void OnUpdateGraphPolygon(CCmdUI *pCmdUI);
+	afx_msg void OnGraphText();
+	afx_msg void OnUpdateGraphText(CCmdUI *pCmdUI);
+private:
+	void StatusOnMouseMove(CPoint point);	//鼠标移动过程中状态栏的更新，必须先用CGraph::OnMouseMove更新CGraph中的m_p0和m_pm
+	void UpdateGraphStyle(const int &GraphStyleChose);
 };
 
 #ifndef _DEBUG  // Interactive_plottingView.cpp 中的调试版本

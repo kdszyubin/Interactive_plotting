@@ -189,6 +189,8 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DrawSettingDlg.h" />
+    <ClInclude Include="Graph.h" />
     <ClInclude Include="Interactive_plotting.h" />
     <ClInclude Include="Interactive_plottingDoc.h" />
     <ClInclude Include="Interactive_plottingView.h" />
@@ -198,6 +200,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DrawSettingDlg.cpp" />
+    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Interactive_plotting.cpp" />
     <ClCompile Include="Interactive_plottingDoc.cpp" />
     <ClCompile Include="Interactive_plottingView.cpp" />
@@ -216,6 +220,15 @@
     <None Include="res\Interactive_plotting.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Downloads\favicon-20151027021515112.ico" />
+    <Image Include="..\..\..\..\Downloads\favicon-20151027021515220.ico" />
+    <Image Include="..\..\..\..\Downloads\favicon-20151027021515365.ico" />
+    <Image Include="..\..\..\..\Downloads\favicon-2015102702151540.ico" />
+    <Image Include="..\..\..\..\Downloads\favicon-20151027021515656.ico" />
+    <Image Include="..\..\..\..\Downloads\favicon-20151027021515838.ico" />
+    <Image Include="..\..\..\..\Downloads\favicon-2015102702151590.ico" />
+    <Image Include="..\..\..\..\Downloads\favicon-20151027021750131.ico" />
+    <Image Include="..\..\..\..\Downloads\favicon-20151027022532125.ico" />
     <Image Include="res\Interactive_plotting.ico" />
     <Image Include="res\Interactive_plottingDoc.ico" />
     <Image Include="res\Toolbar.bmp" />

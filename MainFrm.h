@@ -13,6 +13,8 @@ protected: // 仅从序列化创建
 
 // 特性
 public:
+	enum SBID { prompt, xName, xVal, yName, yVal , dxName, dxVal, dyName, dyVal};
+	CStatusBar        m_wndStatusBar;
 
 // 操作
 public:
@@ -31,7 +33,6 @@ public:
 
 protected:  // 控件条嵌入成员
 	CToolBar          m_wndToolBar;
-	CStatusBar        m_wndStatusBar;
 
 // 生成的消息映射函数
 protected:
