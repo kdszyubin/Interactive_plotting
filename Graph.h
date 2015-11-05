@@ -1,5 +1,5 @@
 #pragma once
-
+#include "GraphStyleEdit.h"
 #define MAX_NCOUNT 500
 #define GS_LINE 0
 #define GS_RECTANGLE 1
@@ -19,12 +19,15 @@ public:
 	void OnMouseMove(CWnd* pWnd, UINT nFlags, CPoint point);
 	void OnLButtonUp(CWnd* pWnd, UINT nFlags, CPoint point);
 	void PenStyleRefresh();					//根据变量刷新笔风格
-	void GraphStyleRefresh();				//根据变量更新图标风格记录（与记录不同，则需更新nCount)
+	void GraphStyleRefresh(CDC *pDC, const int & GraphStyleChose = -1);				//根据变量更新图标风格记录（与记录不同，则需更新nCount)
 	void BrushStyleRefresh();				//根据变量更新刷子风格
-	void Refresh();							//调用前面三个函数
+	void Refresh(CDC *pDC);							//调用前面三个函数
 
 	void GetDxDy(int &dx, int &dy);			//获取鼠标当前位置和按下左键时的位置的相对距离
 	void RevokeDraw(CDC *pDC);
+
+	void RemoveEdit(CDC * pDC);
+
 
 	COLORREF m_crPenCol;					//保存笔的颜色
 	COLORREF m_crBrushCol;					//保存刷子颜色
@@ -39,6 +42,8 @@ public:
 	int m_iBrushStripeStyle;				//保存刷子条纹类型的风格
 
 	int m_iOldGraphStyle = -1;
+
+	CGraphStyleEdit *m_pEdit;
 private:
 	BOOL m_bLButtonDown,				// 判断是否按下左鼠标键
 		m_bErase;						// 是否需要擦除图形

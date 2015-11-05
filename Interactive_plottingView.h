@@ -68,6 +68,17 @@ public:
 private:
 	void StatusOnMouseMove(CPoint point);	//鼠标移动过程中状态栏的更新，必须先用CGraph::OnMouseMove更新CGraph中的m_p0和m_pm
 	void UpdateGraphStyle(const int &GraphStyleChose);
+public:
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	//afx_msg void OnGetFont();
+	/*
+	CFont m_font;
+	LOGFONT m_logFont;
+	wchar_t m_fontName[LF_FACESIZE];
+	int m_iFontSize;
+	COLORREF m_textColor;
+	BOOL m_bItalic, m_bBold, m_bUnderline, m_bStrikeOut;
+	*/
 };
 
 #ifndef _DEBUG  // Interactive_plottingView.cpp 中的调试版本

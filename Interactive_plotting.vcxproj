@@ -191,6 +191,7 @@
   <ItemGroup>
     <ClInclude Include="DrawSettingDlg.h" />
     <ClInclude Include="Graph.h" />
+    <ClInclude Include="GraphStyleEdit.h" />
     <ClInclude Include="Interactive_plotting.h" />
     <ClInclude Include="Interactive_plottingDoc.h" />
     <ClInclude Include="Interactive_plottingView.h" />
@@ -202,6 +203,7 @@
   <ItemGroup>
     <ClCompile Include="DrawSettingDlg.cpp" />
     <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="GraphStyleEdit.cpp" />
     <ClCompile Include="Interactive_plotting.cpp" />
     <ClCompile Include="Interactive_plottingDoc.cpp" />
     <ClCompile Include="Interactive_plottingView.cpp" />

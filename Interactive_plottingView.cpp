@@ -21,7 +21,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
+#define IDC_EDITX 9090
 
 // CInteractive_plottingView
 
@@ -53,6 +53,8 @@ BEGIN_MESSAGE_MAP(CInteractive_plottingView, CView)
 	ON_UPDATE_COMMAND_UI(ID_GRAPH_POLYGON, &CInteractive_plottingView::OnUpdateGraphPolygon)
 	ON_COMMAND(ID_GRAPH_TEXT, &CInteractive_plottingView::OnGraphText)
 	ON_UPDATE_COMMAND_UI(ID_GRAPH_TEXT, &CInteractive_plottingView::OnUpdateGraphText)
+	ON_WM_CTLCOLOR()
+	//ON_COMMAND(ID_GET_FONT, &CInteractive_plottingView::OnGetFont)
 END_MESSAGE_MAP()
 
 // CInteractive_plottingView 构造/析构
@@ -90,7 +92,7 @@ void CInteractive_plottingView::OnDraw(CDC* /*pDC*/)
 	CBrush brush(RGB(rand() % 256, rand() % 256, rand() % 256));	// 创建随机颜色刷子
 	pOldPen = pDC->SelectObject(&pen);								// 设备上下文选择新笔，旧笔保存在pOldPen中
 	pDC->SelectObject(&brush);										// 设备上下文选择新刷
-	pDC->Ellipse(0, 0, m_iW, m_iH);									// 设置参数、绘制图形	
+	//pDC->Ellipse(0, 0, m_iW, m_iH);									// 设置参数、绘制图形	
 	pDC->SelectObject(pOldPen);										// 选择旧笔
 	pen.DeleteObject();												// 删除新笔
 	ReleaseDC(pDC);													// 释放DC
@@ -206,7 +208,10 @@ void CInteractive_plottingView::OnDrawSetting()
 		m_bGraphFill = drawSettingDlg.m_bGraphFill;
 		m_iBrushStyle = drawSettingDlg.m_iBrushStyle;
 		m_iBrushStripeStyle = drawSettingDlg.m_iBrushStripeStyle;
-		Refresh();							// 根据父类CGraph中的变量刷新父类CGraph中笔和刷子的类型
+		
+		CDC *pDC = GetDC();
+		Refresh(pDC);							// 根据父类CGraph中的变量刷新父类CGraph中笔和刷子的类型
+		ReleaseDC(pDC);
 		assert(-1 <= m_iGraphStyle && m_iGraphStyle <= 7);//什么都不选为-1
 		assert(0 <= m_iPenStyle && m_iPenStyle <= 6);
 		assert(0 <= m_iBrushStyle && m_iBrushStyle <= 3);
@@ -232,21 +237,7 @@ void CInteractive_plottingView::StatusOnMouseMove(CPoint point) //鼠标移动过程中
 
 void CInteractive_plottingView::UpdateGraphStyle(const int & GraphStyleChose) // 根据工具栏中对图形的修改更新图形风格
 {
-	if (m_iGraphStyle == GraphStyleChose)
-	{
-		if (m_iGraphStyle == GS_POLYGON)
-		{
-			CDC* pDC = this->GetDC();				// 获取设备上下文
-			RevokeDraw(pDC);
-			this->ReleaseDC(pDC);					// 释放设备上下文
-		}
-		m_iGraphStyle = -1;
-	}
-	else
-	{
-		m_iGraphStyle = GraphStyleChose;
-		GraphStyleRefresh();
-	}
+	GraphStyleRefresh(GetDC(), GraphStyleChose);
 }
 
 void CInteractive_plottingView::OnGraphLine()
@@ -328,3 +319,44 @@ void CInteractive_plottingView::OnUpdateGraphText(CCmdUI * pCmdUI)
 {
 	pCmdUI->SetCheck(m_iGraphStyle == GS_TEXT);
 }
+
+
+HBRUSH CInteractive_plottingView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	HBRUSH hbr = __super::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	// TODO:  在此更改 DC 的任何特性
+	switch (pWnd->GetDlgCtrlID())
+	{
+	case IDC_EDITX:
+		//pDC->SetBkMode(TRANSPARENT);
+		//return (HBRUSH)::GetStockObject(NULL_BRUSH);
+		break;
+	}
+	// TODO:  如果默认的不是所需画笔，则返回另一个画笔
+	return hbr;
+}
+
+
+/*
+void CInteractive_plottingView::OnGetFont()
+{
+	// TODO: 在此添加命令处理程序代码
+	CFontDialog fontDlg(&m_logFont);
+	fontDlg.m_cf.rgbColors = m_textColor;
+	if (fontDlg.DoModal() == IDOK) {
+		wcscpy_s(m_fontName, LF_FACESIZE, fontDlg.GetFaceName());
+		m_iFontSize = fontDlg.GetSize();
+		m_textColor = fontDlg.GetColor();
+		m_bItalic = fontDlg.IsItalic();
+		m_bBold = fontDlg.IsBold();
+		m_bStrikeOut = fontDlg.IsStrikeOut();
+		m_bUnderline = fontDlg.IsUnderline();
+		m_font.CreatePointFont(m_iFontSize, m_fontName);
+		//m_font.CreateFont(35, 15, 0, 0, FW_NORMAL, FALSE, FALSE, 0, DEFAULT_CHARSET, DEFAULT_CHARSET,
+		//	CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SCRIPT, L"新宋体");
+		//if (m_pEdit != NULL) m_pEdit->SetFont(&m_font);
+	}
+	//RedrawWindow(); // 重绘窗口（请求调用OnDraw）
+}
+*/

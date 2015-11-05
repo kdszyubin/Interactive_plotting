@@ -1,10 +1,12 @@
 #include "stdafx.h"
 #include "Graph.h"
+#include "GraphStyleEdit.h"
 
 #define BS_HOLLOW 0
 #define BS_SOLID 1
 #define BS_STRIPE 2
 #define BS_PICTURE 3
+#define IDC_EDITX 9090
 
 CGraph::CGraph()					// 初始化公共变量，并通过公共变量初始化笔和刷子类型
 {
@@ -27,6 +29,7 @@ CGraph::CGraph()					// 初始化公共变量，并通过公共变量初始化笔和刷子类型
 	m_TargetPen.CreatePen(m_iPenStyle, m_iPenWidth, m_crPenCol); 
 	m_TargetBrush.CreateSolidBrush(m_crBrushCol);
 	nCount = 0;
+	m_pEdit = NULL;
 }
 
 
@@ -94,6 +97,7 @@ void CGraph::OnLButtonUp(CWnd* pWnd, UINT nFlags, CPoint point)
 
 void CGraph::TargetDraw(CDC * pDC)
 {
+	
 	CRect rect(m_p0, m_pm);
 	int d;
 	switch (m_iGraphStyle)
@@ -130,6 +134,14 @@ void CGraph::TargetDraw(CDC * pDC)
 		}
 		break;
 	case GS_TEXT:
+		RemoveEdit(pDC);
+		if (nCount == 2 && m_p0 != m_pm)
+		{
+			m_pEdit = new CGraphStyleEdit();
+			m_pEdit->Create(WS_VISIBLE | ES_LEFT, rect, pDC->GetWindow(), IDC_EDITX);
+			m_pEdit->SetFocus();
+		}
+		nCount = 0;
 		break;
 	default:											// 撤销没有选择图形时的点的记录
 		nCount = 0;
@@ -174,6 +186,7 @@ void CGraph::MovingDraw(CDC* pDC)
 		pDC->MoveTo(m_p0); pDC->LineTo(m_pm);
 		break;
 	case GS_TEXT:
+		pDC->Rectangle(&rect);
 		break;
 	}
 }
@@ -184,10 +197,26 @@ void CGraph::PenStyleRefresh()
 	m_TargetPen.CreatePen(m_iPenStyle, m_iPenWidth, m_crPenCol);
 }
 
-void CGraph::GraphStyleRefresh()
+void CGraph::GraphStyleRefresh(CDC *pDC, const int & GraphStyleChose)
 {
+	if (GraphStyleChose != -1)
+	{
+		if (m_iGraphStyle == GraphStyleChose)
+			m_iGraphStyle = -1;
+		else
+			m_iGraphStyle = GraphStyleChose;
+	}
 	if (m_iOldGraphStyle != m_iGraphStyle)
 	{
+		switch (m_iOldGraphStyle)
+		{
+		case GS_POLYGON:
+			RevokeDraw(pDC);
+			break;
+		case GS_TEXT:
+			RemoveEdit(pDC);
+			break;
+		}
 		m_iOldGraphStyle = m_iGraphStyle;
 		nCount = 0;
 	}
@@ -223,10 +252,10 @@ void CGraph::BrushStyleRefresh()
 	}
 }
 
-void CGraph::Refresh()
+void CGraph::Refresh(CDC *pDC)
 {
 	PenStyleRefresh();
-	GraphStyleRefresh();
+	GraphStyleRefresh(pDC);
 	BrushStyleRefresh();
 }
 
@@ -246,3 +275,18 @@ void CGraph::RevokeDraw(CDC *pDC)
 	pDC->Polyline(m_aPoints, nCount);			// 擦除绘制过程中的折线
 	nCount = 0;
 }
+
+void CGraph::RemoveEdit(CDC *pDC)
+{
+	RECT rectofEdit;
+	CString textofEdit;
+	if (m_pEdit != NULL)
+	{
+		m_pEdit->GetWindowRect(&rectofEdit);
+		pDC->GetWindow()->ScreenToClient(&rectofEdit);
+		m_pEdit->GetWindowText(textofEdit);
+		delete m_pEdit;
+		m_pEdit = NULL;
+		pDC->TextOut(rectofEdit.left, rectofEdit.top, textofEdit);
+	}
+};
