@@ -145,7 +145,6 @@ BEGIN
         MENUITEM "×´Ì¬À¸(&S)",                     ID_VIEW_STATUS_BAR
     END
     MENUITEM "»æÍ¼(&D)",                      ID_DRAW_SETTING
-    MENUITEM "×ÖÌå(&T)",                      ID_GET_FONT
     POPUP "°ïÖú(&H)"
     BEGIN
         MENUITEM "¹ØÓÚ Interactive_plotting(&A)...", ID_APP_ABOUT
